@@ -1,0 +1,20 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+# build artifacts
+/.next/
+/.vinext/
+/out/
+/dist/
+*.tsbuildinfo
+# local configuration and secrets
+.env*
+!.env.example
+*.pem
+/.vercel/
+/.wrangler/
+/.sites-runtime/
+/.agents/
+/.codex/
+.DS_Store
