@@ -1,2 +1,10 @@
-import { env } from 'cloudflare:workers';
-export async function GET(_request:Request,{params}:{params:Promise<{key:string}>}){try{const {key}=await params;if(!/^[a-f0-9-]+\.(jpg|png|webp)$/.test(key))return new Response('No encontrada',{status:404});const object=await env.BUCKET?.get(key);if(!object)return new Response('No encontrada',{status:404});return new Response(object.body,{headers:{'Content-Type':object.httpMetadata?.contentType??'application/octet-stream','Cache-Control':'public, max-age=31536000, immutable','X-Content-Type-Options':'nosniff'}});}catch{return new Response('Imagen no disponible',{status:503});}}
+import { supabaseUrl } from '@/lib/supabase/config';
+
+// Preserve existing catalog URLs after moving photo storage to Supabase.
+export async function GET(_request: Request, { params }: { params: Promise<{ key: string }> }) {
+  const { key } = await params;
+  if (!/^[a-f0-9-]+\.(jpg|png|webp)$/.test(key)) {
+    return new Response('No encontrada', { status: 404 });
+  }
+  return Response.redirect(`${supabaseUrl}/storage/v1/object/public/nani-products/${key}`, 307);
+}

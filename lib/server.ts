@@ -22,7 +22,12 @@ export async function isAdmin(){
 }
 export function requireOrigin(request:Request){
  const origin=request.headers.get('origin');
- if(!origin||origin!==new URL(request.url).origin)throw new Error('Origen no autorizado.');
+ // Next.js may use an internal hostname in request.url behind a reverse proxy.
+ // Host is the browser-facing domain; Vercel supplies the external protocol.
+ const url=new URL(request.url);
+ const host=request.headers.get('host')||url.host;
+ const protocol=request.headers.get('x-forwarded-proto')||url.protocol.slice(0,-1);
+ if(!['http','https'].includes(protocol)||!origin||origin!==`${protocol}://${host}`)throw new Error('Origen no autorizado.');
 }
 export async function requireAdmin(request?:Request){
  if(request)requireOrigin(request);
